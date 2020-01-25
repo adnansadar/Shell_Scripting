@@ -1,4 +1,6 @@
 #!/bin/bash
 git add .
-git commit -m "update repository"
+echo "Enter commit:"
+read c
+git commit -m "$c"
 git push origin master
