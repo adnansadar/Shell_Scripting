@@ -2,13 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define NUM_THREADS 10
 #define M 3
 #define K 2
 #define N 3
-#define NUM_THREADS 10
 
-int A [M][K] = { {1,4}, {2,5}, {3,6} };
-int B [K][N] = { {8,7,6}, {5,4,3} };
+int A [M][K];
+int B [K][N];
 int C [M][N];
 
 struct v {
@@ -16,13 +16,49 @@ struct v {
    int j; /* column */
 };
 
-void *runner(void *param); /* the thread */
+void *thread1(void *param); /* the thread */
 
 int main(int argc, char *argv[]) {
+	printf("**************************MATRIX OPERATIONS*********************\n");
+	printf("Enter the array elements of 1st array:\n");
+	for (int i = 0; i < M; ++i)
+	{
+		for (int j = 0; j < K; ++j)
+		{
+			scanf("%d ",&A[i][j]);
+		}
+	}
+	printf("Enter the array elements of 2nd array:\n");
+	for (int i = 0; i < K; ++i)
+	{
+		for (int j = 0; j < N; ++j)
+		{
+			scanf("%d ",&B[i][j]);
+		}
+	}
+	printf("\nOriginal Matrices:\n\n");
+	for (int i = 0; i < M; ++i)
+	{
+		for (int j = 0; j < K; ++j)
+		{
+			printf("%d ",A[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+	for (int i = 0; i < K; ++i)
+	{
+		for (int j = 0; j < N; ++j)
+		{
+			printf("%d ",B[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\nMatrix Multiplication:\n");
 
-   int i,j, count = 0;
-   for(i = 0; i < M; i++) {
-      for(j = 0; j < N; j++) {
+   int count = 0;
+   for(int i = 0; i < M; i++) {
+      for(int j = 0; j < N; j++) {
          //Assign a row and column for each thread
          struct v *data = (struct v *) malloc(sizeof(struct v));
          data->i = i;
@@ -33,7 +69,7 @@ int main(int argc, char *argv[]) {
          //Get the default attributes
          pthread_attr_init(&attr);
          //Create the thread
-         pthread_create(&tid,&attr,runner,data);
+         pthread_create(&tid,&attr,thread1,data);
          //Make sure the parent waits for all thread to complete
          pthread_join(tid, NULL);
          count++;
@@ -41,8 +77,8 @@ int main(int argc, char *argv[]) {
    }
 
    //Print out the resulting matrix
-   for(i = 0; i < M; i++) {
-      for(j = 0; j < N; j++) {
+   for(int i = 0; i < M; i++) {
+      for(int j = 0; j < N; j++) {
          printf("%d ", C[i][j]);
       }
       printf("\n");
@@ -50,12 +86,12 @@ int main(int argc, char *argv[]) {
 }
 
 //The thread will begin control in this function
-void *runner(void *param) {
+void *thread1(void *param) {
    struct v *data = param; // the structure that holds our data
    int n, sum = 0; //the counter and sum
 
    //Row multiplied by column
-   for(n = 0; n< K; n++){
+   for(n = 0; n < K; n++){
       sum += A[data->i][n] * B[n][data->j];
    }
    //assign the sum to its coordinate
