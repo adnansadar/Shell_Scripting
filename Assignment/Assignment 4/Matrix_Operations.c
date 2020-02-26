@@ -19,7 +19,7 @@ struct v {
 void *thread1(void *param); /* the thread */
 
 int main(int argc, char *argv[]) {
-	printf("**************************MATRIX OPERATIONS*********************\n");
+	printf("**************************MATRIX OPERATIONS******************************\n");
 	printf("Enter the array elements of 1st array:\n");
 	for (int i = 0; i < M; ++i)
 	{
@@ -58,9 +58,7 @@ int main(int argc, char *argv[]) {
 
    int count = 0;
    for(int i = 0; i < M; i++) {
-      for(int j = 0; j < N; j++) {
-         //Assign a row and column for each thread
-         struct v *data = (struct v *) malloc(sizeof(struct v));
+      for(int j = 0; j < N; j++) {*data = (struct v *) malloc(sizeof(struct v));
          data->i = i;
          data->j = j;
          /* Now create the thread passing it data as a parameter */
@@ -75,8 +73,6 @@ int main(int argc, char *argv[]) {
          count++;
       }
    }
-
-   //Print out the resulting matrix
    for(int i = 0; i < M; i++) {
       for(int j = 0; j < N; j++) {
          printf("%d ", C[i][j]);
@@ -89,14 +85,9 @@ int main(int argc, char *argv[]) {
 void *thread1(void *param) {
    struct v *data = param; // the structure that holds our data
    int n, sum = 0; //the counter and sum
-
-   //Row multiplied by column
    for(n = 0; n < K; n++){
       sum += A[data->i][n] * B[n][data->j];
    }
-   //assign the sum to its coordinate
    C[data->i][data->j] = sum;
-
-   //Exit the thread
    pthread_exit(0);
 }
